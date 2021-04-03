@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
 
 import styled from 'styled-components/native';
 
@@ -9,52 +8,59 @@ import PhoneIcon from '../assets/Images/phone.svg';
 import BackIcon from '../assets/Images/back.svg';
 
 import Api from '../Api';
+import { phoneMask } from '../Mask';
 
 import Colors from '../assets/Themes/Colors';
 
-export default ({ show, setShow, idJogador }) => {
+import AlertCustom from '../components/AlertCustom';
+
+export default ({ show, setShow, user }) => {
 
     const [phoneField1, setPhoneField1] = useState('');
     const [phoneField2, setPhoneField2] = useState('');
+
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
 
     const handleCloseButtonClick = () => {
         setShow(false);
     }
 
     const handlePhoneUpdateClick = async () => {
-        if(phoneField1 != '')
+        if(phoneField1 != '' && phoneField1.length === 14)
         {
-            let result = await Api.updatePhone(idJogador, phoneField1, phoneField2);
-            
+            let result = await Api.updatePhone(user, phoneField1, phoneField2);
             if(result)
             {
-                Alert.alert("Telefone alterado com sucesso!");
-                setShow(false);
+                setAlert(true, "Aviso:", "Telefone alterado com sucesso!");
             }
         }
-        else if(phoneField2 != '')
+        else if(phoneField2 != '' && phoneField2.length === 14)
         {
-            let result = await Api.updatePhone(idJogador, userInfo.celular1, phoneField2);
-            
+            let result = await Api.updatePhone(user, userInfo.celular1, phoneField2);
             if(result)
             {
-                Alert.alert("Telefone alterado com sucesso!");
-                setShow(false);
+                setAlert(true, "Aviso:", "Telefone alterado com sucesso!");
             }            
         }
-        else if(phoneField1 != '' && phoneField2 != '')
+        else if((phoneField1 != '' && phoneField1.length === 14) && (phoneField2 != '' && phoneField1.length === 14))
         {
-            let result = await Api.updatePhone(idJogador, phoneField1, phoneField2);
-            
+            let result = await Api.updatePhone(user, phoneField1, phoneField2);
             if(result)
             {
-                Alert.alert("Telefone alterado com sucesso!");
-                setShow(false);
+                setAlert(true, "Aviso:", "Telefone alterado com sucesso!");
             }              
         }
         else
         {
-            Alert.alert("Preencha o/os campo(s)!");
+            setAlert(true, "Erro ao alterar o telefone:", "Preencha o/os campo(s) corretamente!");
         }
     }
 
@@ -71,18 +77,22 @@ export default ({ show, setShow, idJogador }) => {
 
                 <InfoArea>
                     <InputArea>
-                        <InputNumber
+                        <InputNumber 
                             IconSvg = { PhoneIcon }
                             placeholder = "Número do celular (1)"
-                            value = { phoneField1 }
+                            value = { phoneMask(phoneField1) }
                             onChangeText = { t => setPhoneField1(t) }
+                            maxLength = { 14 }
+                            minLength = { 14 }
                         />
 
-                        <InputNumber
+                        <InputNumber 
                             IconSvg = { PhoneIcon }
                             placeholder = "Número do celular (2)"
-                            value = { phoneField2 }
+                            value = { phoneMask(phoneField2) }
                             onChangeText = { t => setPhoneField2(t) }
+                            maxLength = { 14 }
+                            minLength = { 14 }
                         />
 
                         <CustomButton onPress = { handlePhoneUpdateClick } >
@@ -95,7 +105,18 @@ export default ({ show, setShow, idJogador }) => {
                 <CloseButton onPress = { handleCloseButtonClick } >
                     <BackIcon width = "40" height = "40" fill = "#FFF" />
                 </CloseButton>
+
             </ModalArea>
+
+            <AlertCustom
+                showAlert = { alertVisible }
+                setShowAlert = { setAlertVisible } 
+                alertTitle = { alertTitle }
+                alertMessage = { alertMessage }
+                diplayNegativeButton = { true }
+                negativeText = { "OK" }
+            />
+
         </Modal>
     );
 }

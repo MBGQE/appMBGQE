@@ -28,9 +28,15 @@ export default () => {
     const [emailField, setEmailField] = useState('');
     const [passwordField, setPasswordField] = useState('');
 
-    const [alertFields, setAlertFields] = useState(false);
-    const [alertUserNot, setAlertUserNot] = useState(false);
-    const [alertWrongPass, setAlertWrongPass] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
     
     const handleSignInClick = async () => {
         if(emailField != '' && passwordField != '')
@@ -39,18 +45,22 @@ export default () => {
             
             if(result.code == "auth/user-not-found")
             {
-                setAlertUserNot(true);
+                setAlert(true, "Erro ao entrar:", "Usuário não encontrado!");
             }
             else if(result.code == "auth/wrong-password")
             {
-                setAlertWrongPass(true);
+                setAlert(true, "Erro ao entrar:", "A senha informada está errada!");
+            }
+            else if(result.code == "auth/invalid-email")
+            {
+                setAlert(true, "Erro ao entrar:", "E-mail inválido!");
             }
             else
             {
                 userDispatch({
                     type: 'setId',
                     payload: {
-                        id: result.user.uid 
+                        id: result
                     }
                 });
                 navigation.reset({
@@ -61,7 +71,7 @@ export default () => {
         }
         else
         {
-            setAlertFields(true);
+            setAlert(true, "Erro ao entrar:", "Preencha todos os campos!");
         }
     }
         
@@ -86,7 +96,7 @@ export default () => {
                     placeholder = "Digite sua senha"
                     value = { passwordField }
                     onChangeText = { t => setPasswordField(t) }
-                    password = { true }
+                    password
                 />
                 
                 <CustomButton onPress = { handleSignInClick } >
@@ -100,29 +110,11 @@ export default () => {
             </SignMessageButton>
 
             <AlertCustom
-                showAlert = { alertFields }
-                setShowAlert = { setAlertFields } 
-                alertTitle = { "Erro no Login" }
-                alertMessage = { "Preencha todos os campos!" }
-                diplayNegativeButton = { true }
-                negativeText = { "OK" }
-            />
-
-            <AlertCustom
-                showAlert = { alertUserNot }
-                setShowAlert = { setAlertUserNot } 
-                alertTitle = { "Erro no Login" }
-                alertMessage = { "E-mail errado e/ou conta não cadastrada!" }
-                diplayNegativeButton = { true }
-                negativeText = { "OK" }
-            />
-
-            <AlertCustom
-                showAlert = { alertWrongPass }
-                setShowAlert = { setAlertWrongPass } 
-                alertTitle = { "Erro no Login" }
-                alertMessage = { "Senha Inválida!" }
-                diplayNegativeButton = { true }
+                showAlert = { alertVisible }
+                setShowAlert = { setAlertVisible } 
+                alertTitle = { alertTitle }
+                alertMessage = { alertMessage }
+                displayNegativeButton = { true }
                 negativeText = { "OK" }
             />
 

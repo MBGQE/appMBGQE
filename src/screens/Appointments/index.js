@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../context/UserContext';
-import { Alert, RefreshControl } from 'react-native';
-
-import AwesomeAlert from 'react-native-awesome-alerts';
+import { RefreshControl } from 'react-native';
 
 import { 
     BackButton,
@@ -34,7 +32,8 @@ import {
 
 import BackIcon from '../../assets/Images/back.svg';
 import Api from '../../Api';
-import Colors from '../../assets/Themes/Colors';
+
+import AlertCustom from '../../components/AlertCustom';
 
 export default () => {
     const navigation = useNavigation();
@@ -43,9 +42,22 @@ export default () => {
     const [listAppointments, setListAppointments] = useState([]);
     const [infoUser, setInfoUser] = useState('');
     const [refreshing, setRefreshing] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
 
     const { state: user } = useContext(UserContext);
+
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [itemCancel, setItemCancel] = useState("");
+
+    let Today = "";
+    
+    const setAlert = (visible = false, title = "", message = "", item) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+        setItemCancel(item);
+    }
 
     const getInfoAppointments = async () => {
         setLoading(true);
@@ -53,6 +65,7 @@ export default () => {
         let result = await Api.onAppointments(user.id);
         if(result)
         {
+            result.reverse();
             setListAppointments(result);
         }
         let list = await Api.LoadUserPlayer(user.id);
@@ -67,6 +80,16 @@ export default () => {
         getInfoAppointments();
     }, []);
 
+    useEffect(() => {
+        let date = new Date();
+        let Day = date.getDate();
+        let Month = date.getMonth();
+        let Year = date.getFullYear();
+        let month = Month < 10 ? '0' + (Month + 1) : (Month + 1);
+        let day = Day < 10 ? '0' + Day : Day;
+        Today = `${day}/${month}/${Year}`;
+    }, []);
+
     const handleBackButton = () => {
         navigation.goBack();
     };
@@ -76,8 +99,8 @@ export default () => {
         getInfoAppointments();
     }
 
-    const handleCancelAppointments = () => {
-        setShowAlert(true);
+    const handleCancelAppointments = (listAppointments) => {
+        setAlert(true, "Sistema:", "Deseja mesmo cancelar o agendamento?", listAppointments);
     }
 
     const CancelAppointments = async (listAppointments) => {
@@ -108,6 +131,7 @@ export default () => {
                     listAppointments.map((item, key) => (
                         <PageBody 
                             key = { key }
+                            style = {{ opacity: item.data < Today ? 1 : 0.75 }}
                         >
                             <InfoQuadraArea>
                                 <InfoQuadraAvatar source = {{ uri: item.avatar }} />
@@ -131,34 +155,24 @@ export default () => {
                                 </InfoDateArea>
                             </InfoQuadraServiceArea>
 
-                                <CancelButton onPress = { () => handleCancelAppointments() }>
+                                <CancelButton onPress = { () => handleCancelAppointments(item) }>
                                     <CancelButtonText>Cancelar</CancelButtonText>
                                 </CancelButton>
-                                <AwesomeAlert
-                                    show={showAlert}
-                                    showProgress={false}
-                                    title="Cancelamento do Agendamento"
-                                    message="Deseja mesmo cancelar?"
-                                    closeOnTouchOutside={true}
-                                    closeOnHardwareBackPress={false}
-                                    showCancelButton={true}
-                                    showConfirmButton={true}
-                                    cancelText="Não"
-                                    confirmText="Sim"
-                                    confirmButtonColor={ Colors.primary }
-                                    cancelButtonColor="#FF0000"
-                                    onCancelPressed={() => {
-                                        setShowAlert(false);
-                                    }}
-                                    onConfirmPressed={() => {
-                                        CancelAppointments(item)
-                                        setShowAlert(false);
-                                    }}
-                                /> 
+
+                                <AlertCustom
+                                    showAlert = { alertVisible }
+                                    setShowAlert = { setAlertVisible } 
+                                    alertTitle = { alertTitle }
+                                    alertMessage = { alertMessage }
+                                    displayNegativeButton = { true }
+                                    negativeText = { "Não" }
+                                    displayPositiveButton = { true }
+                                    positiveText = { "Sim" }
+                                    onPressPositiveButton = { () => CancelAppointments(itemCancel) }
+                                />
                         </PageBody>
                     ))
-                }       
-
+                }  
         </Scroller>
     );
 }

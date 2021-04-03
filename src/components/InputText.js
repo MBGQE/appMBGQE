@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import styled from 'styled-components/native';
 import Colors from '../assets/Themes/Colors';
 
@@ -27,11 +27,20 @@ const TextRequesited = styled.Text`
 
 
 export default ({ IconSvg, placeholder, value, onChangeText, password, requesited }) => {
+    const inputRef = useRef(null);
+    useEffect(() => {
+        inputRef.current.setNativeProps({
+            style: {
+                fontFamily: "arial"
+            }
+        })
+    }, [])
 
     return(
         <InputArea>
             <IconSvg width = "24" height = "24" fill = { Colors.primary } />
             <Input
+                ref = { inputRef }
                 placeholder = { placeholder }    
                 placeholderTextColor = { Colors.primary } 
                 value = { value }     

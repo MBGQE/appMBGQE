@@ -7,9 +7,9 @@ export default ({
     setShowAlert, 
     alertTitle, 
     alertMessage,
-    diplayNegativeButton,
+    displayNegativeButton,
     negativeText,  
-    diplayPositiveButton,
+    displayPositiveButton,
     positiveText,
     onPressPositiveButton,
     }) => {
@@ -20,6 +20,7 @@ export default ({
 
     const handlePositiveClick = () => {
         onPressPositiveButton();
+        setShowAlert(false);
     }
 
     return(
@@ -40,17 +41,17 @@ export default ({
 
                     <ModalButton>
                         {
-                            diplayNegativeButton 
+                            displayNegativeButton 
                             &&
                             <CustomButton onPress = { handleNegativeClick } >
-                                <CustomButtonText>{ negativeText }</CustomButtonText>
+                                <CustomButtonText>{ negativeText || "OK" }</CustomButtonText>
                             </CustomButton>
                         }
                         {
-                            diplayPositiveButton
+                            displayPositiveButton
                             &&
-                            <CustomButton onPress = { handlePositiveClick } >
-                                <CustomButtonText>{ positiveText }</CustomButtonText>
+                            <CustomButton onPress = { () => handlePositiveClick() } >
+                                <CustomButtonText>{ positiveText || "OK" }</CustomButtonText>
                             </CustomButton>
                         }
                     </ModalButton>

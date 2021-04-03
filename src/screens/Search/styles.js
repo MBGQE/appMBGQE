@@ -24,7 +24,6 @@ export const SearchAreaText = styled.TextInput`
     flex: 1;
     font-size: 16px;
     color: #FFF;
-    fontFamily: monospace;
 `;
 
 export const Scroller = styled.ScrollView`
