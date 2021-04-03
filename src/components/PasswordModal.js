@@ -125,7 +125,7 @@ export default ({ show, setShow, user }) => {
                 setShowAlert = { setAlertVisible } 
                 alertTitle = { alertTitle }
                 alertMessage = { alertMessage }
-                diplayNegativeButton = { true }
+                displayNegativeButton = { true }
                 negativeText = { "OK" }
             />
 
