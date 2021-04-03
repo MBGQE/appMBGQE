@@ -38,6 +38,7 @@ import AlertCustom from '../../components/AlertCustom';
 import { phoneMask } from '../../Mask';
 
 export default () => {
+    const { dispatch: userDispatch } = useContext(UserContext);
 
     const navigation = useNavigation();
 
@@ -47,68 +48,75 @@ export default () => {
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [phoneField1, setPhoneField1] = useState('');
     const [phoneField2, setPhoneField2] = useState('');
+
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
     
-    const { dispatch: userDispatch } = useContext(UserContext);
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
 
     const regex = /^(?=(?:.*?[A-Z]){1})(?=(?:.*?[0-9]){2})(?=(?:.*?[!@#$%*()_+^&}{:;?.]){1})(?!.*\s)[0-9a-zA-Z!@#$%;*(){}_+^&]*$/; 
-
-    const [alertFields, setAlertFields] = useState(false);
-    const [alertPassword1, setAlertPassword1] = useState(false);
-    const [alertPassword2, setAlertPassword2] = useState(false);
-    const [alertPassword3, setAlertPassword3] = useState(false);
-    const [alertEmailUse, setAlertEmailUse] = useState(false);
-    const [alertInvalidEmail, setAlertInvalidEmail] = useState(false);
-    const [alertWeakPass, SetAlertWeakPass] = useState(false);
-
 
     const handleSingUpClick = async () => {
         if(nameField != '' && emailField != '' && passwordField != '' && phoneField1 != '' && passwordConfirm != '')
         {
             if(passwordField.length < 6 && passwordConfirm < 6)
             {
-                setAlertPassword1(true);
+                setAlert(true, "Erro no cadastro:", "A senha precisa ter no mínimo 6 caracteres!");
             }
             else if(!regex.exec(passwordField) && (!regex.exec(passwordConfirm)))
             {
-                setAlertPassword2(true);
+                setAlert(true, "Erro no cadastro:", "A senha deve conter 1 caratere em maiúsculo e 1 catectere especial!");
             }
             else if(passwordConfirm != passwordField)
             {
-                setAlertPassword3(true);
+                setAlert(true, "Erro no cadastro:", "As senhas não são iguais!");
             }
             else
             {
-                let result = await Api.SignUp(nameField, emailField, passwordField, phoneField1, phoneField2);
-                if(result.code == "auth/email-already-in-use")
+                if(phoneField1.length == 14 || phoneField2.length == 14)
                 {
-                    
-                }
-                else if(result.code == "auth/invalid-email")
-                {
-
-                }
-                else if(result.code == "auth/weak-password")
-                {
-                    
+                    let result = await Api.SignUp(nameField, emailField, passwordField, phoneField1, phoneField2)
+                    console.log("Result: ", result);
+                    if(result.code == "auth/email-already-in-use")
+                    {
+                        setAlert(true, "Erro no cadastro:", "E-mail já está em uso!");
+                    }
+                    else if(result.code == "auth/invalid-email")
+                    {
+                        setAlert(true, "Erro no cadastro:", "E-mail inválido!");
+                    }
+                    else if(result.code == "auth/weak-password")
+                    {
+                        setAlert(true, "Erro no cadastro:", "A senha é muito fraca");
+                    }
+                    else
+                    {
+                        userDispatch({
+                            type: 'setId',
+                            payload: {
+                                id: result
+                            }
+                        });
+                        await Api.setTokenMessage(result);
+                        navigation.reset({
+                            routes: [{name: 'MainTab'}]
+                        });
+                    }                    
                 }
                 else
                 {
-                    userDispatch({
-                        type: 'setId',
-                        payload: {
-                            id: result
-                        }
-                    });
-                    await Api.setTokenMessage(result);
-                    navigation.reset({
-                        routes: [{name: 'MainTab'}]
-                    });
-                }
+                    setAlert(true, "Erro no cadastro:", "O tamanho do telefone não está correto!");
+                }                
             }
         }
         else
         {
-            setAlertFields(true);
+            setAlert(true, "Erro no cadastro:", "Preencha todos os campos!");
         }  
     }
 
@@ -200,38 +208,11 @@ export default () => {
                 </SignMessageButton>
 
                 <AlertCustom
-                    showAlert = { alertFields }
-                    setShowAlert = { setAlertFields } 
-                    alertTitle = { "Erro no Cadastro" }
-                    alertMessage = { "Preencha todos os campos!" }
-                    diplayNegativeButton = { true }
-                    negativeText = { "OK" }
-                />
-
-                <AlertCustom
-                    showAlert = { alertPassword1 }
-                    setShowAlert = { setAlertPassword1 } 
-                    alertTitle = { "Erro na Senha" }
-                    alertMessage = { "A senha precisa ter no mínimo 6 caracteres!" }
-                    diplayNegativeButton = { true }
-                    negativeText = { "OK" }
-                />
-
-                <AlertCustom
-                    showAlert = { alertPassword2 }
-                    setShowAlert = { setAlertPassword2 } 
-                    alertTitle = { "Erro na Senha" }
-                    alertMessage = { "A senha deve conter no mínimo 1 caratere em maiúsculo, 2 números e 1 catectere especial!" }
-                    diplayNegativeButton = { true }
-                    negativeText = { "OK" }
-                />
-
-                <AlertCustom
-                    showAlert = { alertPassword3 }
-                    setShowAlert = { setAlertPassword3 } 
-                    alertTitle = { "Erro na Senha" }
-                    alertMessage = { "As senhas não são iguais!" }
-                    diplayNegativeButton = { true }
+                    showAlert = { alertVisible }
+                    setShowAlert = { setAlertVisible } 
+                    alertTitle = { alertTitle }
+                    alertMessage = { alertMessage }
+                    displayNegativeButton = { true }
                     negativeText = { "OK" }
                 />
 

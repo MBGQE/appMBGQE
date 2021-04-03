@@ -3,7 +3,6 @@ import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
 import storage from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
 
 const db = firestore();
 
@@ -15,15 +14,13 @@ export default {
     },
 
     SignUp: async (name, email, password, telefone1, telefone2) => {
-        var userRes = '';
-        await auth()
+        return await auth()
                 .createUserWithEmailAndPassword(email, password)
                 .then(user => {
-                    userRes = user.user.uid;
                     db.collection('jogador')
-                    .doc(userRes)
+                    .doc(user.user.uid)
                     .set({
-                        idJogador: userRes,
+                        idJogador: user.user.uid,
                         name: name,
                         email: email,
                         senha: password,
@@ -31,19 +28,21 @@ export default {
                         celular2: telefone2,
                         avatar: '',
                     });
+                    return user.user.uid;
                 })
                 .catch(error => {
                     return error;
                 });
-        return userRes;
     },
 
     SignIn: async (email, password) => {
-        let result = await auth().signInWithEmailAndPassword(email, password)
+        return await auth().signInWithEmailAndPassword(email, password)
+            .then(user => {
+                return user.user.uid;
+            })
             .catch(error => {
                 return error;
             });
-        return result;
     },
 
     setTokenMessage: async (idJogador) => {
@@ -320,16 +319,16 @@ export default {
         let cred = auth.EmailAuthProvider.credential(user.email, currentPassword);
         await user.reauthenticateWithCredential(cred).then(() => {
             user.updatePassword(newPassword).then(() => {
-                Alert.alert("Senha alterada com sucesso");
+                return true;
             })
             .catch(error => {
-                console.log("erro: 1", error);
+                return error;
             })
         })
         .catch(error => {
             if(error.code === "auth/wrong-password")
             { 
-                Alert.alert("Senha inválida!"); 
+                return false;
             }
         });
 
@@ -375,6 +374,9 @@ export default {
             .update({
                 celular1: celular1,
                 celular2: celular2
+            })
+            .catch(error => {
+                return error;
             });
         return true;
     },

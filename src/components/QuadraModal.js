@@ -7,9 +7,10 @@ import NavPrevIcon from '../assets/Images/nav_prev.svg';
 import NavNextIcon from '../assets/Images/nav_next.svg';
 import { UserContext } from '../context/UserContext';
 import Api from '../Api';
-import { Alert } from 'react-native';
 
 import Colors from '../assets/Themes/Colors';
+
+import AlertCustom from '../components/AlertCustom';
 
 const months = [
     'Janeiro',
@@ -48,6 +49,17 @@ export default ({ show, setShow, quadraInfo, service }) => {
     const [selectedHour, setSelectedHour] = useState(null);
     const [listDays, setListDays] = useState([]);
     const [listHours, setListHours] = useState([]);
+
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
+
 
     useEffect(() => {
 
@@ -105,7 +117,7 @@ export default ({ show, setShow, quadraInfo, service }) => {
                     month = month < 10 ? '0' + month : month;
                     day = day < 10 ? '0' + day : day;
                     let selDate = `${day}/${month}/${year}`;
-
+                    console.log(selDate);
                     let availability = listPeriod.filter(e => 
                         e.data === selDate
                     );
@@ -117,11 +129,11 @@ export default ({ show, setShow, quadraInfo, service }) => {
                 }
                 else
                 {
-                    Alert.alert("Não é possivel agendar em uma data passada!");
+                    setAlert(true, "Erro ao agendar:", "Não é possível agendar em uma data passada!");
+                    setListHours(false);
+                    setSelectedHour(null);
                 }
-
             }
-            setSelectedHour(null);
         }
         verifyDate();
     }, [listPeriod, selectedDay]);
@@ -131,14 +143,9 @@ export default ({ show, setShow, quadraInfo, service }) => {
             if(selectedDay > 0 && selectedHour != null)
             {
                 let result = await Api.verifyHourAppointment(selectedDay, selectedMonth, selectedYear, selectedHour);
-                if(result)
+                if(!result)
                 {
-                    Alert.alert("Pode finalizar o agendamento!");
-                }
-                else
-                {
-                    Alert.alert("Não é possivel agendar em uma hora passada!");
-                    setSelectedHour(null);
+                    setAlert(true, "Erro ao agendar:", "Não é possível agendar em uma hora passada!");
                 }
             }
         }
@@ -174,20 +181,20 @@ export default ({ show, setShow, quadraInfo, service }) => {
     const handleFinishClick = async () => {
         if(listPeriod && service != null && selectedYear > 0 && selectedMonth >= 0 && selectedDay > 0 && selectedHour != null)
         {
-            let result = await Api.setAppointment(user.id, quadraInfo, service, selectedYear, selectedMonth, selectedDay, selectedHour);
-            if(result)
-            {              
-                setShow(false);
-                navigation.navigate('Appointments');
-            }
-            else
+            let confirm = await Api.verifyHourAppointment(selectedDay, selectedMonth, selectedYear, selectedHour);
+            if(confirm)
             {
-                Alert.alert("Erro ao realizar o Agendamento!");
+                setAlert(true, "Aviso:", "Agendamento finalizado!")
+            }
+            let result = await Api.setAppointment(user.id, quadraInfo, service, selectedYear, selectedMonth, selectedDay, selectedHour);
+            if(!result)
+            {
+                setAlert(true, "Atenção:", "Erro ao realizar o agendamento!");
             }
         }
         else
         {
-            Alert.alert("Selecione todos os dados!");
+            setAlert(true, "Atenção:", "Selecione o dia e a hora!");
         }
     }
 
@@ -200,7 +207,7 @@ export default ({ show, setShow, quadraInfo, service }) => {
             <ModalArea>
                 <ModalBody>
                     <CloseButton onPress = { handleCloseButton } >
-                        <ExpandIcon width = "40" height = "40" fill = "#000" />
+                        <ExpandIcon width = "40" height = "40" fill = "#FFF" />
                     </CloseButton>
 
                     <ModalItem>
@@ -301,6 +308,15 @@ export default ({ show, setShow, quadraInfo, service }) => {
                     </FinishButton>
                 </ModalBody>
             </ModalArea>
+
+            <AlertCustom
+                showAlert = { alertVisible }
+                setShowAlert = { setAlertVisible } 
+                alertTitle = { alertTitle }
+                alertMessage = { alertMessage }
+                diplayNegativeButton = { true }
+                negativeText = { "OK" }
+            />
 
         </Modal>
     );

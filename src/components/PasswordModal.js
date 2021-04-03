@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
 import styled from 'styled-components/native';
 
 import InputText from './InputText';
@@ -10,11 +9,23 @@ import LockIcon from '../assets/Images/lock.svg';
 import Colors from '../assets/Themes/Colors';
 import Api from '../Api';
 
+import AlertCustom from '../components/AlertCustom';
+
 export default ({ show, setShow, user }) => {
     
     const [newPasswordField, setNewPasswordField] = useState('');
     const [currentPasswordField, setCurrentPasswordField] = useState('');
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
 
     const regex = /^(?=(?:.*?[A-Z]){1})(?=(?:.*?[0-9]){2})(?=(?:.*?[!@#$%*()_+^&}{:;?.]){1})(?!.*\s)[0-9a-zA-Z!@#$%;*(){}_+^&]*$/; 
 
@@ -27,36 +38,36 @@ export default ({ show, setShow, user }) => {
         {
             if(newPasswordField.length < 6 && newPasswordConfirm.length < 6)
             {
-                Alert.alert("A senha precisa ter no mínimo 6 caracteres");
+                setAlert(true, "Erro ao alterar a senha:", "A nova senha precisa ter no mínimo 6 caracteres!");
             }
             else if(!regex.exec(newPasswordField))
             {
-                Alert.alert("A senha deve conter no mínimo 1 caratere em maiúsculo, 2 números e 1 catectere especial!");
+                setAlert(true, "Erro ao alterar a senha:", "A senha deve conter 1 caratere em maiúsculo e 1 catectere especial!");
             }
             else if(!regex.exec(newPasswordConfirm))
             {
-                Alert.alert("A senha deve conter no mínimo 1 caratere em maiúsculo, 2 números e 1 catectere especial!");
+                setAlert(true, "Erro ao alterar a senha:", "A senha deve conter 1 caratere em maiúsculo e 1 catectere especial!");
             }
             else if(!regex.exec(newPasswordField))
             {
-                Alert.alert("A senha deve conter no mínimo 1 caratere em maiúsculo, 2 números e 1 catectere especial!");
+                setAlert(true, "Erro ao alterar a senha:", "A senha deve conter 1 caratere em maiúsculo e 1 catectere especial!");
             }
             else if(newPasswordField != newPasswordConfirm)
             {
-                Alert.alert("As senhas não são iguais!");
+                setAlert(true, "Erro ao alterar a senha:", "As senhas informadas não correspondem!");
             }
             else
             {
                 let result = await Api.updatePassword(user.idJogador, newPasswordField, currentPasswordField);
                 if(result)
                 {
-                    setShow(false);
+                    setAlert(true, "Aviso:", "Senha alterada com sucesso!");
                 }
             }
         }
         else
         {
-            Alert.alert("Preencha a senha!");
+            setAlert(true, "Erro ao alterar a senha:", "Preencha os campos!");
         }
     }
 
@@ -106,7 +117,17 @@ export default ({ show, setShow, user }) => {
                 <CloseButton onPress = { handleCloseButtonClick } >
                     <BackIcon width = "40" height = "40" fill = "#FFF" />
                 </CloseButton>
+
             </ModalArea>
+
+            <AlertCustom
+                showAlert = { alertVisible }
+                setShowAlert = { setAlertVisible } 
+                alertTitle = { alertTitle }
+                alertMessage = { alertMessage }
+                diplayNegativeButton = { true }
+                negativeText = { "OK" }
+            />
 
         </Modal>
     );

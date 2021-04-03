@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import { UserContext } from '../../context/UserContext';
-import { Alert, RefreshControl } from 'react-native';
+import { RefreshControl } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import { 
@@ -27,6 +27,8 @@ import AccountIcon from '../../assets/Images/account.svg';
 import PasswordModal from '../../components/PasswordModal';
 import PhoneModal from '../../components/PhoneModal';
 
+import AlertCustom from '../../components/AlertCustom';
+
 import Api from '../../Api';
 
 export default () => {
@@ -39,8 +41,18 @@ export default () => {
     const [showModalPhone, setShowModalPhone] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     
-    const { state: user } = useContext(UserContext); 
+    const { state: user } = useContext(UserContext);
 
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+    
+    const setAlert = (visible = false, title = "", message = "") => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(visible);
+    }
+    
     const UserInfoData = async () => {
         let result = await Api.LoadUserPlayer(user.id);
         if(result.exists)
@@ -54,27 +66,26 @@ export default () => {
     }, []);
 
     const handleUpdateAvatar = async () => {
-        let imagePath = '';
         await ImagePicker.openPicker({
             cropping: true
         })
-        .then(image => {
-            console.log(image);
-            imagePath = image.path;
+        .then(async({path}) => {
+            console.log(path);
+            if(path !== "")
+            {
+                const result = await Api.uploadImage(user.id, path);
+                const upAvatar = await Api.updateAvatar(user.id, result);
+                if(upAvatar)
+                {
+                    setAlert(true, "Aviso", "Avatar atualizado com sucesso!");
+                    UserInfoData();
+                }
+            }
         })
         .catch(error => {
-            console.log("Error: ", error.message);
-        });
-        if(imagePath != '')
-        {
-            let result = await Api.uploadImage(user.id, imagePath);
-            let upAvatar = await Api.updateAvatar(user.id, result);
-            if(upAvatar)
-            {
-                Alert.alert("Avatar atualizado com sucesso!");
-                UserInfoData();
-            }
-        }        
+            console.log(error);
+            setAlert(true, "Erro!", "Avatar não atualizado.");
+        });      
     }
 
     const handleUpdatePasswordClick = () => {
@@ -154,8 +165,16 @@ export default () => {
                 show = { showModalPhone }
                 setShow = { setShowModalPhone }
                 idJogador = { user.id }
-            />                   
+            />
 
+            <AlertCustom
+                showAlert = { alertVisible }
+                setShowAlert = { setAlertVisible } 
+                alertTitle = { alertTitle }
+                alertMessage = { alertMessage }
+                diplayNegativeButton = { true }
+                negativeText = { "OK" }
+            />
         </Container>
     );
 }

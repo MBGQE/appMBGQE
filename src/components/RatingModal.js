@@ -14,7 +14,6 @@ export default ({ show, setShow, quadraInfo }) => {
     }
 
     ratingCompleted = async (rating) => {
-        console.log("Rating: ", rating);
         let result = await Api.ratingStar(rating, quadraInfo.idQuadra);
         if(result) 
         {
