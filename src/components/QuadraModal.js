@@ -38,7 +38,6 @@ const days = [
 ];
 
 export default ({ show, setShow, quadraInfo, service }) => {
-    const navigation = useNavigation();
     const { state: user } = useContext(UserContext);
     
     const [listPeriod, setListPeriod] = useState([]);
@@ -117,7 +116,6 @@ export default ({ show, setShow, quadraInfo, service }) => {
                     month = month < 10 ? '0' + month : month;
                     day = day < 10 ? '0' + day : day;
                     let selDate = `${day}/${month}/${year}`;
-                    console.log(selDate);
                     let availability = listPeriod.filter(e => 
                         e.data === selDate
                     );
@@ -132,6 +130,7 @@ export default ({ show, setShow, quadraInfo, service }) => {
                     setAlert(true, "Erro ao agendar:", "Não é possível agendar em uma data passada!");
                     setListHours(false);
                     setSelectedHour(null);
+                    setSelectedDay(0);
                 }
             }
         }
@@ -146,6 +145,8 @@ export default ({ show, setShow, quadraInfo, service }) => {
                 if(!result)
                 {
                     setAlert(true, "Erro ao agendar:", "Não é possível agendar em uma hora passada!");
+                    setListHours(false);
+                    setSelectedHour(null);
                 }
             }
         }
@@ -314,7 +315,7 @@ export default ({ show, setShow, quadraInfo, service }) => {
                 setShowAlert = { setAlertVisible } 
                 alertTitle = { alertTitle }
                 alertMessage = { alertMessage }
-                diplayNegativeButton = { true }
+                displayNegativeButton = { true }
                 negativeText = { "OK" }
             />
 
