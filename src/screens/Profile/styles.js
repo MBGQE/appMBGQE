@@ -12,6 +12,15 @@ export const Scroller = styled.ScrollView`
     background-color: ${ Colors.primary };
 `;
 
+export const LoadingIcon = styled.ActivityIndicator`
+    margin-top: 50px;
+`;
+
+export const ViewProfile = styled.View`
+    flex: 1;
+    background-color: ${ Colors.primary };
+`;
+
 export const ProfileArea = styled.View`
     flex: 1;
     justify-content: center;

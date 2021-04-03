@@ -8,6 +8,9 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { 
     Container,
     Scroller,
+    LoadingIcon,
+    ViewProfile,
+    
     ProfileArea,
 
     UserInfoArea,
@@ -39,6 +42,7 @@ export default () => {
 
     const [showModalPassword, setShowModalPassword] = useState(false);    
     const [showModalPhone, setShowModalPhone] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     
     const { state: user } = useContext(UserContext);
@@ -54,11 +58,13 @@ export default () => {
     }
     
     const UserInfoData = async () => {
+        setLoading(true);
         let result = await Api.LoadUserPlayer(user.id);
         if(result.exists)
         {
             setUserInfo(result.data());
         }
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -70,6 +76,7 @@ export default () => {
             cropping: true
         })
         .then(async({path}) => {
+            setLoading(true);
             console.log(path);
             if(path !== "")
             {
@@ -81,6 +88,7 @@ export default () => {
                     UserInfoData();
                 }
             }
+            setLoading(false);
         })
         .catch(error => {
             console.log(error);
@@ -117,42 +125,48 @@ export default () => {
                     <RefreshControl refreshing = { refreshing } onRefresh = { onRefresh } />
                 }
             >
-                
-                <ProfileArea>
-                    <UserInfoArea>
-                        <AvatarArea>
-                            <UserAvatarUpdate onPress = { handleUpdateAvatar } >
-                                {
-                                    userInfo.avatar != "" ?
-                                        <UserAvatar source = {{ uri: userInfo.avatar }} />
-                                        :
-                                        <AccountIcon width = "150" height = "150" fill = "#FFF" />
-                                }
-                            </UserAvatarUpdate>
-                        </AvatarArea>
+                {
+                    loading
+                    &&
+                    <LoadingIcon size = "large" color = "#FFF" />
+                }
+                <ViewProfile>
+                    <ProfileArea>
+                        <UserInfoArea>
+                            <AvatarArea>
+                                <UserAvatarUpdate onPress = { handleUpdateAvatar } >
+                                    {
+                                        userInfo.avatar != "" ?
+                                            <UserAvatar source = {{ uri: userInfo.avatar }} />
+                                            :
+                                            <AccountIcon width = "150" height = "150" fill = "#FFF" />
+                                    }
+                                </UserAvatarUpdate>
+                            </AvatarArea>
 
-                        <UserInfo>
-                            <UserInfoName>{ userInfo.name }</UserInfoName>
-                        </UserInfo>
+                            <UserInfo>
+                                <UserInfoName>{ userInfo.name }</UserInfoName>
+                            </UserInfo>
 
-                    </UserInfoArea>
-                </ProfileArea>
+                        </UserInfoArea>
+                    </ProfileArea>
 
-                <CustomButtonArea>            
+                    <CustomButtonArea>            
 
-                    <CustomButton onPress = { handleUpdatePasswordClick } >
-                        <CustomButtonText>Alterar Senha</CustomButtonText>
-                    </CustomButton>
+                        <CustomButton onPress = { handleUpdatePasswordClick } >
+                            <CustomButtonText>Alterar Senha</CustomButtonText>
+                        </CustomButton>
 
-                    <CustomButton onPress = { handleUpdatePhoneClick } >
-                        <CustomButtonText>Alterar Telefone</CustomButtonText>
-                    </CustomButton>
+                        <CustomButton onPress = { handleUpdatePhoneClick } >
+                            <CustomButtonText>Alterar Telefone</CustomButtonText>
+                        </CustomButton>
 
-                    <CustomButton onPress = { handleSignOutClick } >
-                        <CustomButtonText>Sair da Conta</CustomButtonText>
-                    </CustomButton>
-                </CustomButtonArea>
-               
+                        <CustomButton onPress = { handleSignOutClick } >
+                            <CustomButtonText>Sair da Conta</CustomButtonText>
+                        </CustomButton>
+                    </CustomButtonArea>
+
+                </ViewProfile>               
             </Scroller>
 
             <PasswordModal 
@@ -164,7 +178,7 @@ export default () => {
             <PhoneModal 
                 show = { showModalPhone }
                 setShow = { setShowModalPhone }
-                idJogador = { user.id }
+                user = { user.id }
             />
 
             <AlertCustom
@@ -172,7 +186,7 @@ export default () => {
                 setShowAlert = { setAlertVisible } 
                 alertTitle = { alertTitle }
                 alertMessage = { alertMessage }
-                diplayNegativeButton = { true }
+                displayNegativeButton = { true }
                 negativeText = { "OK" }
             />
         </Container>
