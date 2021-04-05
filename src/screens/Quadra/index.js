@@ -17,6 +17,7 @@ import {
 
     UserInfoArea,    
     UserAvatar,
+    AvatarIcon,
     UserInfo,
     UserInfoName,
     RatingButton,
@@ -43,6 +44,9 @@ import Stars from '../../components/Stars';
 import QuadraModal from '../../components/QuadraModal';
 import RatingModal from '../../components/RatingModal';
 import BackIcon from '../../assets/Images/back.svg';
+import AccountIcon from '../../assets/Images/account.svg';
+
+import Colors from '../../assets/Themes/Colors';
 
 export default () => {
     const navigation = useNavigation();
@@ -115,8 +119,14 @@ export default () => {
 
                 <PageBody>
                     <UserInfoArea>
-                        
-                        <UserAvatar source = {{ uri: quadraInfo.avatar }} />
+                        {
+                            quadraInfo.avatar == '' ?
+                            <AvatarIcon>
+                                <AccountIcon width = "110" height = "110" fill = { Colors.primary } />
+                            </AvatarIcon>
+                            :
+                            <UserAvatar source = {{ uri: quadraInfo.avatar }} />                        
+                        }
                             
                         <UserInfo>
                             <UserInfoName>{ quadraInfo.name } </UserInfoName>

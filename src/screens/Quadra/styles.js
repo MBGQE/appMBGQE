@@ -59,8 +59,21 @@ export const UserAvatar = styled.Image`
     border-radius: 20px;
     margin-left: 30px;
     margin-right: 20px;
-    border-width: 4px;
+    border-width: 2px;
     border-color: #FFF;
+`;
+
+export const AvatarIcon = styled.View`
+    width: 110px;
+    height: 110px;
+    border-radius: 20px;
+    margin-left: 30px;
+    margin-right: 20px;
+    border-width: 2px;
+    border-color: #000;
+    background-color: #FFF;
+    justify-content: center;
+    align-items: center;
 `;
 
 export const UserInfo = styled.View`

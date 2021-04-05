@@ -49,8 +49,6 @@ export default () => {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertVisible, setAlertVisible] = useState(false);
     const [itemCancel, setItemCancel] = useState("");
-
-    let Today = "";
     
     const setAlert = (visible = false, title = "", message = "", item) => {
         setAlertTitle(title);
@@ -78,16 +76,6 @@ export default () => {
 
     useEffect(() => {
         getInfoAppointments();
-    }, []);
-
-    useEffect(() => {
-        let date = new Date();
-        let Day = date.getDate();
-        let Month = date.getMonth();
-        let Year = date.getFullYear();
-        let month = Month < 10 ? '0' + (Month + 1) : (Month + 1);
-        let day = Day < 10 ? '0' + Day : Day;
-        Today = `${day}/${month}/${Year}`;
     }, []);
 
     const handleBackButton = () => {
@@ -131,7 +119,6 @@ export default () => {
                     listAppointments.map((item, key) => (
                         <PageBody 
                             key = { key }
-                            style = {{ opacity: item.data < Today ? 1 : 0.75 }}
                         >
                             <InfoQuadraArea>
                                 <InfoQuadraAvatar source = {{ uri: item.avatar }} />
@@ -155,24 +142,24 @@ export default () => {
                                 </InfoDateArea>
                             </InfoQuadraServiceArea>
 
-                                <CancelButton onPress = { () => handleCancelAppointments(item) }>
-                                    <CancelButtonText>Cancelar</CancelButtonText>
-                                </CancelButton>
-
-                                <AlertCustom
-                                    showAlert = { alertVisible }
-                                    setShowAlert = { setAlertVisible } 
-                                    alertTitle = { alertTitle }
-                                    alertMessage = { alertMessage }
-                                    displayNegativeButton = { true }
-                                    negativeText = { "Não" }
-                                    displayPositiveButton = { true }
-                                    positiveText = { "Sim" }
-                                    onPressPositiveButton = { () => CancelAppointments(itemCancel) }
-                                />
+                            <CancelButton onPress = { () => handleCancelAppointments(item) }>
+                                <CancelButtonText>Cancelar</CancelButtonText>
+                            </CancelButton>
                         </PageBody>
                     ))
-                }  
+                } 
+
+                <AlertCustom
+                    showAlert = { alertVisible }
+                    setShowAlert = { setAlertVisible } 
+                    alertTitle = { alertTitle }
+                    alertMessage = { alertMessage }
+                    displayNegativeButton = { true }
+                    negativeText = { "Não" }
+                    displayPositiveButton = { true }
+                    positiveText = { "Sim" }
+                    onPressPositiveButton = { () => CancelAppointments(itemCancel) }
+                /> 
         </Scroller>
     );
 }
