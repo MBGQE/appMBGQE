@@ -206,8 +206,9 @@ export default {
         let list = [];
         let result = await db.collection('jogador').doc(idJogador).get();
         let listAppointments = result.data().agendamento;
+
         await db.collection('agendamento')
-            .orderBy('hora', 'asc')
+            .orderBy('hora', 'desc')
             .get()
             .then(snapshot => {
                 snapshot.docs.map(doc => {

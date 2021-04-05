@@ -131,7 +131,6 @@ export default () => {
                     listAppointments.map((item, key) => (
                         <PageBody 
                             key = { key }
-                            style = {{ opacity: item.data < Today ? 1 : 0.75 }}
                         >
                             <InfoQuadraArea>
                                 <InfoQuadraAvatar source = {{ uri: item.avatar }} />
@@ -155,24 +154,24 @@ export default () => {
                                 </InfoDateArea>
                             </InfoQuadraServiceArea>
 
-                                <CancelButton onPress = { () => handleCancelAppointments(item) }>
-                                    <CancelButtonText>Cancelar</CancelButtonText>
-                                </CancelButton>
-
-                                <AlertCustom
-                                    showAlert = { alertVisible }
-                                    setShowAlert = { setAlertVisible } 
-                                    alertTitle = { alertTitle }
-                                    alertMessage = { alertMessage }
-                                    displayNegativeButton = { true }
-                                    negativeText = { "Não" }
-                                    displayPositiveButton = { true }
-                                    positiveText = { "Sim" }
-                                    onPressPositiveButton = { () => CancelAppointments(itemCancel) }
-                                />
+                            <CancelButton onPress = { () => handleCancelAppointments(item) }>
+                                <CancelButtonText>Cancelar</CancelButtonText>
+                            </CancelButton>
                         </PageBody>
                     ))
-                }  
+                } 
+
+                <AlertCustom
+                    showAlert = { alertVisible }
+                    setShowAlert = { setAlertVisible } 
+                    alertTitle = { alertTitle }
+                    alertMessage = { alertMessage }
+                    displayNegativeButton = { true }
+                    negativeText = { "Não" }
+                    displayPositiveButton = { true }
+                    positiveText = { "Sim" }
+                    onPressPositiveButton = { () => CancelAppointments(itemCancel) }
+                /> 
         </Scroller>
     );
 }

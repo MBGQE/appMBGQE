@@ -92,7 +92,6 @@ export default () => {
         })
         .catch(error => {
             console.log(error);
-            setAlert(true, "Erro!", "Avatar não atualizado.");
         });      
     }
 

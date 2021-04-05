@@ -38,6 +38,8 @@ const days = [
 ];
 
 export default ({ show, setShow, quadraInfo, service }) => {
+    const navigation = useNavigation();
+
     const { state: user } = useContext(UserContext);
     
     const [listPeriod, setListPeriod] = useState([]);
@@ -182,15 +184,15 @@ export default ({ show, setShow, quadraInfo, service }) => {
     const handleFinishClick = async () => {
         if(listPeriod && service != null && selectedYear > 0 && selectedMonth >= 0 && selectedDay > 0 && selectedHour != null)
         {
-            let confirm = await Api.verifyHourAppointment(selectedDay, selectedMonth, selectedYear, selectedHour);
-            if(confirm)
-            {
-                setAlert(true, "Aviso:", "Agendamento finalizado!")
-            }
             let result = await Api.setAppointment(user.id, quadraInfo, service, selectedYear, selectedMonth, selectedDay, selectedHour);
             if(!result)
             {
                 setAlert(true, "Atenção:", "Erro ao realizar o agendamento!");
+            }
+            else
+            {
+                setAlert(true, "Aviso:", "Agendamento finalizado!");
+                navigation.navigate('Appointments');
             }
         }
         else
