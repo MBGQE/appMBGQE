@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import ExpandIcon from '../assets/Images/expand.svg';
 import NavPrevIcon from '../assets/Images/nav_prev.svg';
 import NavNextIcon from '../assets/Images/nav_next.svg';
+import AccountIcon from '../assets/Images/account.svg';
+
 import { UserContext } from '../context/UserContext';
 import Api from '../Api';
 
@@ -215,8 +217,14 @@ export default ({ show, setShow, quadraInfo, service }) => {
 
                     <ModalItem>
                         <UserInfo>
-                            
-                            <UserAvatar source = {{ uri: quadraInfo.avatar }} />
+                            {
+                                quadraInfo.avatar == '' ?
+                                <AvatarIcon>
+                                    <AccountIcon width = "55" height = "55" fill = { Colors.primary } />
+                                </AvatarIcon>
+                                :
+                                <UserAvatar source = {{ uri: quadraInfo.avatar }} />
+                            }                            
                                     
                             <UserName>{ quadraInfo.name }</UserName>
                         </UserInfo>
@@ -362,6 +370,18 @@ const UserAvatar = styled.Image`
     height: 56px;
     border-radius: 10px;
     margin-right: 15px;
+`;
+
+const AvatarIcon = styled.View`
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    border-width: 3px;
+    margin-right: 15px;
+    border-color: ${ Colors.primary };
+    background-color: #FFF;
+    justify-content: center;
+    align-items: center;
 `;
 
 const UserName = styled.Text`

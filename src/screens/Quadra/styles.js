@@ -69,7 +69,7 @@ export const AvatarIcon = styled.View`
     border-radius: 20px;
     margin-left: 30px;
     margin-right: 20px;
-    border-width: 2px;
+    border-width: 3px;
     border-color: #000;
     background-color: #FFF;
     justify-content: center;

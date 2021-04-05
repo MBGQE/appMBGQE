@@ -20,13 +20,13 @@ const Avatar = styled.Image`
     width: 88px;
     height: 88px;
     border-radius: 20px;
-    border-width: 2px;
+    border-width: 3px;
     border-color: ${ Colors.primary };
 `;
 
 const AvatarIcon = styled.View`
     border-radius: 20px;
-    border-width: 2px;
+    border-width: 3px;
     border-color: ${ Colors.primary };
 `;
 

@@ -207,8 +207,18 @@ export default {
         let result = await db.collection('jogador').doc(idJogador).get();
         let listAppointments = result.data().agendamento;
 
+        let date = new Date();
+        let Day = date.getDate();
+        let Month = date.getMonth();
+        let Year = date.getFullYear();
+        let month = Month < 10 ? '0' + (Month + 1) : (Month + 1);
+        let day = Day < 10 ? '0' + Day : Day;
+
+        let Today = `${day}/${month}/${Year}`;
+
         await db.collection('agendamento')
-            .orderBy('hora', 'desc')
+            .where('data', '>=', Today)
+            .orderBy('data', 'asc')
             .get()
             .then(snapshot => {
                 snapshot.docs.map(doc => {

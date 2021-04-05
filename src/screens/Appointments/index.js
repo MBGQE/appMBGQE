@@ -13,6 +13,7 @@ import {
     Scroller,
     PageBody,
     InfoQuadraArea,
+    AvatarIcon,
     InfoQuadraAvatar,
     InfoQuadraNome,
 
@@ -31,7 +32,10 @@ import {
 } from './styles';
 
 import BackIcon from '../../assets/Images/back.svg';
+import AccountIcon from '../../assets/Images/account.svg';
 import Api from '../../Api';
+
+import Colors from '../../assets/Themes/Colors';
 
 import AlertCustom from '../../components/AlertCustom';
 
@@ -63,7 +67,6 @@ export default () => {
         let result = await Api.onAppointments(user.id);
         if(result)
         {
-            result.reverse();
             setListAppointments(result);
         }
         let list = await Api.LoadUserPlayer(user.id);
@@ -121,7 +124,14 @@ export default () => {
                             key = { key }
                         >
                             <InfoQuadraArea>
-                                <InfoQuadraAvatar source = {{ uri: item.avatar }} />
+                                {
+                                    item.avatar == '' ?
+                                    <AvatarIcon>
+                                        <AccountIcon width = "55" height = "55" fill = { Colors.primary } />
+                                    </AvatarIcon>
+                                    :
+                                    <InfoQuadraAvatar source = {{ uri: item.avatar }} />
+                                }                                
                                 <InfoQuadraNome>{ item.quadraNome }</InfoQuadraNome>
                             </InfoQuadraArea>
 

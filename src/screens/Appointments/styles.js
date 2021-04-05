@@ -55,8 +55,21 @@ export const InfoQuadraArea = styled.View`
 export const InfoQuadraAvatar = styled.Image`
     width: 55px;
     height: 55px;
-    border-radius: 5px;
+    border-radius: 10px;
+    border-width: 3px;
+    border-color: ${ Colors.primary };
 `;
+
+export const AvatarIcon = styled.View`
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+    border-width: 3px;
+    border-color: ${ Colors.primary };
+    background-color: #FFF;
+    justify-content: center;
+    align-items: center;
+`
 
 export const InfoQuadraNome = styled.Text`
     font-size: 18px;
