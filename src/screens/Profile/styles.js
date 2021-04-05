@@ -37,7 +37,7 @@ export const UserInfoArea = styled.View`
 `;
 
 export const AvatarArea = styled.View`
-    border-width: 5px;
+    border-width: 2px;
     border-color: #FFF;    
     border-radius: 20px;
 `;
@@ -48,10 +48,13 @@ export const UserAvatar = styled.Image`
     width: 150px;
     height: 150px;
     border-radius: 20px;
+    border-width: 3px;
+    border-color: ${ Colors.primary };
 `;
 
 export const UserInfo = styled.View`
     flex: 1;
+    margin-top: 25px;
     justify-content: flex-start;
 `;
 
@@ -79,7 +82,7 @@ export const CustomButton = styled.TouchableOpacity`
     border-radius: 30px;
     justify-content: center;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 `;
 
 export const CustomButtonText = styled.Text`

@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import Stars from './Stars';
 
+import AccountIcon from '../assets/Images/account.svg';
+
 import Colors from '../assets/Themes/Colors';
 
 const Area = styled.TouchableOpacity`
@@ -18,6 +20,14 @@ const Avatar = styled.Image`
     width: 88px;
     height: 88px;
     border-radius: 20px;
+    border-width: 2px;
+    border-color: ${ Colors.primary };
+`;
+
+const AvatarIcon = styled.View`
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: ${ Colors.primary };
 `;
 
 const InfoArea = styled.View`
@@ -59,20 +69,22 @@ export default ({ data }) => {
 
     return(
         <Area onPress = { handleClick } >
-            
-            <Avatar source = {{ uri: data.avatar }} />
+            {
+                data.avatar == '' ?
+                <AvatarIcon>
+                    <AccountIcon width = "88" height = "88" fill = { Colors.primary } />
+                </AvatarIcon>
+                :
+                <Avatar source = {{ uri: data.avatar }} />
+            }
             
             <InfoArea>
-                <UserName>
-                    { data.name }
-                </UserName>
+                <UserName>{ data.name }</UserName>
 
                 <Stars stars = { data.stars } showNumber = { true } />
 
                 <SeeProfileBotton>
-                    <SeeProfileBottonText>
-                        Ver Perfil
-                    </SeeProfileBottonText>
+                    <SeeProfileBottonText>Ver Perfil</SeeProfileBottonText>
                 </SeeProfileBotton>
             </InfoArea>
         </Area>

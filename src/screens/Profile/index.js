@@ -150,23 +150,22 @@ export default () => {
                         </UserInfoArea>
                     </ProfileArea>
 
-                    <CustomButtonArea>            
-
-                        <CustomButton onPress = { handleUpdatePasswordClick } >
-                            <CustomButtonText>Alterar Senha</CustomButtonText>
-                        </CustomButton>
-
-                        <CustomButton onPress = { handleUpdatePhoneClick } >
-                            <CustomButtonText>Alterar Telefone</CustomButtonText>
-                        </CustomButton>
-
-                        <CustomButton onPress = { handleSignOutClick } >
-                            <CustomButtonText>Sair da Conta</CustomButtonText>
-                        </CustomButton>
-                    </CustomButtonArea>
-
                 </ViewProfile>               
             </Scroller>
+
+            <CustomButtonArea>     
+                <CustomButton onPress = { handleUpdatePasswordClick } >
+                    <CustomButtonText>Alterar Senha</CustomButtonText>
+                </CustomButton>
+
+                <CustomButton onPress = { handleUpdatePhoneClick } >
+                    <CustomButtonText>Alterar Telefone</CustomButtonText>
+                </CustomButton>
+
+                <CustomButton onPress = { handleSignOutClick } >
+                    <CustomButtonText>Sair da Conta</CustomButtonText>
+                </CustomButton>
+            </CustomButtonArea>
 
             <PasswordModal 
                 show = { showModalPassword }
