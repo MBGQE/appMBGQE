@@ -67,6 +67,12 @@ export default () => {
         let result = await Api.onAppointments(user.id);
         if(result)
         {
+            result.sort((a, b) => {
+                return ((a.hora > b.hora) && (a.data >= b.data)) ? 1 : ((a.hora < b. hora) && (a.data <= b.data)) ? -1 : 0;
+            });
+            result.map((item) => {
+                console.log(`Quadra: ${item.quadraNome} + Data: ${item.data} + Hora: ${item.hora}`);
+            });
             setListAppointments(result);
         }
         let list = await Api.LoadUserPlayer(user.id);

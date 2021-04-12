@@ -194,7 +194,6 @@ export default ({ show, setShow, quadraInfo, service }) => {
             else
             {
                 setAlert(true, "Aviso:", "Agendamento finalizado!");
-                navigation.navigate('Appointments');
             }
         }
         else

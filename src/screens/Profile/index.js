@@ -35,6 +35,8 @@ import AlertCustom from '../../components/AlertCustom';
 
 import Api from '../../Api';
 
+import Colors from '../../assets/Themes/Colors';
+
 export default () => {
 
     const navigation = useNavigation();

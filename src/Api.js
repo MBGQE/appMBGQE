@@ -46,11 +46,38 @@ export default {
     },
 
     setTokenMessage: async (idJogador) => {
-        await messaging().registerDeviceForRemoteMessages();
-        const token = await messaging().getToken();
-        await db.collection('jogador').doc(idJogador).update({
-            token: token
+        await messaging().getToken().then(token => {
+            console.log("Token: ", token);
+            firestore().collection('jogador').doc(idJogador).update({
+                token: token
+            });
         });
+    },
+
+    refreshTokenMessage: async (idJogador) => {
+        var refreshToken = '';
+        let result = await db.collection('jogador').doc(idJogador).get();
+        let listAppointments = result.data().agendamento;
+
+        await messaging().getToken().then(token => {
+            refreshToken = token;
+            console.log("Token: ", token);
+            firestore().collection('jogador').doc(idJogador).update({
+                token: token
+            });
+        }); 
+        
+        for(i in listAppointments)
+        {
+            let list = await db.collection('agendamento').doc(listAppointments[i]).get();
+
+            if(list.id == listAppointments[i])
+            {
+                await db.collection('agendamento').doc(listAppointments[i]).update({
+                    jogadorToken: refreshToken
+                });
+            }
+        }
     },
 
     LoadUserPlayer: async (u) => {
@@ -177,7 +204,7 @@ export default {
                 hora: selectedHour,
                 cancelamento: false,
                 idPeriodo: idPeriodo,
-                jogadorToken: infoJogador.data().token
+                jogadorToken: infoJogador.data().token,
             });
 
             transaction.update(jogadorRef, {
@@ -218,7 +245,6 @@ export default {
 
         await db.collection('agendamento')
             .where('data', '>=', Today)
-            .orderBy('data', 'asc')
             .get()
             .then(snapshot => {
                 snapshot.docs.map(doc => {
@@ -238,7 +264,7 @@ export default {
                                     quadraNome: data.quadraNome,
                                     servico: data.servico,
                                     idPeriodo: data.idPeriodo,
-                                    jogadorToken: data.jogadorToken
+                                    jogadorToken: data.jogadorToken,
                                 });
                             }
                         }
@@ -301,27 +327,22 @@ export default {
 
     getCancelNotification: async (idJogador) => {
         let list = [];
-        let token = '';
-        await db.collection('jogador').doc(idJogador).get().then(snapshot => {
-            if(snapshot.exists)
-            {
-                const data = snapshot.data();
-                token = data.token;
-            }
-        });
-        await db.collection('notificacoes').where('token', '==', token).get().then(snapshot => {
-            snapshot.docs.map(doc => {
-                if(doc.exists)
-                {
-                    const data = doc.data();
-                    list.push({
-                        title: data.titulo,
-                        body: data.body,
-                        hourNotify: data.horaNotificacao
-                    });
-                }
+        
+        await db.collection('notificacoes').where('idJogador', '==', idJogador)
+            .get()
+            .then(snapshot => {
+                snapshot.docs.map(doc => {
+                    if(doc.exists)
+                    {
+                        const data = doc.data();
+                        list.push({
+                            title: data.titulo,
+                            body: data.body,
+                            hourNotify: data.horaNotificacao
+                        });
+                    }
+                });
             });
-        });
         return list;
     },
 
