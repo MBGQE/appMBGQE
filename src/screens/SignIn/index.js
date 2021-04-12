@@ -42,7 +42,7 @@ export default () => {
         if(emailField != '' && passwordField != '')
         {
             let result = await Api.SignIn(emailField, passwordField);
-            
+            console.log("Result: ", result);
             if(result.code == "auth/user-not-found")
             {
                 setAlert(true, "Erro ao entrar:", "Usuário não encontrado!");
@@ -63,6 +63,7 @@ export default () => {
                         id: result
                     }
                 });
+                await Api.refreshTokenMessage(result);
                 navigation.reset({
                    routes: [{name: 'MainTab'}]
                 });

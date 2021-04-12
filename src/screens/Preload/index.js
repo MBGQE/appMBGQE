@@ -42,7 +42,7 @@ export default () => {
     return(
         <Container>
             <FootLogo width="100%" height="160" />
-            <LoadingIcon size="large" color="#FFFFFF" />
+            <LoadingIcon size="large" color="#FFF" />
         </Container>
     );
 }

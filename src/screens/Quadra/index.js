@@ -170,7 +170,7 @@ export default () => {
                         quadraInfo.endereco
                         &&
                         <AddressArea>
-                            <AddressTitle>Endereço do Centro Esportivo</AddressTitle>
+                            <AddressTitle>Endereço do Complexo Esportivo</AddressTitle>
                                 <AddressInfo >
                                     <AddressText>Rua: { quadraInfo.endereco.rua }</AddressText>
                                     <AddressText>Numero: { quadraInfo.endereco.numero }</AddressText>

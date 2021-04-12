@@ -14,6 +14,7 @@ import {
     ProfileArea,
 
     UserInfoArea,
+    AvatarIcon,
     AvatarArea, 
     UserAvatarUpdate,
     UserAvatar,
@@ -33,6 +34,8 @@ import PhoneModal from '../../components/PhoneModal';
 import AlertCustom from '../../components/AlertCustom';
 
 import Api from '../../Api';
+
+import Colors from '../../assets/Themes/Colors';
 
 export default () => {
 
@@ -135,10 +138,12 @@ export default () => {
                             <AvatarArea>
                                 <UserAvatarUpdate onPress = { handleUpdateAvatar } >
                                     {
-                                        userInfo.avatar != "" ?
-                                            <UserAvatar source = {{ uri: userInfo.avatar }} />
-                                            :
-                                            <AccountIcon width = "150" height = "150" fill = "#FFF" />
+                                        userInfo.avatar == '' ?
+                                        <AvatarIcon>
+                                            <AccountIcon width = "150" height = "150" fill = { Colors.primary } />
+                                        </AvatarIcon>
+                                        :
+                                        <UserAvatar source = {{ uri: userInfo.avatar }} />                        
                                     }
                                 </UserAvatarUpdate>
                             </AvatarArea>
